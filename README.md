@@ -1,74 +1,64 @@
-# Claude Plugin Monorepo Template
+# Common Coding Agent Plugins
 
-Template repository for bootstrapping high-quality Claude Code plugins with shared CI/CD and testing infrastructure.
+Plugins distributed as marketplaces for Claude Code, Cursor, and Codex.
 
-## Key Features
+## What's Inside
 
-- **Standard Plugin Layout**: Follows best practices for Skills, Agents, Hooks, MCP, and LSP.
-- **Monorepo Ready**: Designed to host multiple plugins under the `plugins/` directory.
-- **Comprehensive Examples**: The `essentials` plugin demonstrates every available extension point.
-- **Shared CI/CD**: Unified quality checks via `trunk` and GitHub Actions.
-- **Integration Tests**: Automated smoke tests that validate manifest schemas, component discovery, and **plugin installation** (marketplace add + install + list/validate) across all plugins.
+This repository ships three marketplace manifests backed by the same `plugins/` directory, so a single plugin source can be installed from any supported coding agent:
 
-## Repository Layout
+- `.claude-plugin/marketplace.json` — Claude Code marketplace (`claude-plugin-template`)
+- `.cursor-plugin/marketplace.json` — Cursor marketplace (`cursor-plugin-template`)
+- `.codex-plugin/marketplace.json` — Codex marketplace (`codex-plugin-template`)
 
-```text
-.
-├── plugins/                     # Container for all plugins
-│   └── essentials/              # Comprehensive sample plugin
-│       ├── .claude-plugin/      # Plugin metadata (plugin.json)
-│       ├── agents/              # Custom agent definitions
-│       ├── skills/              # Model-invoked skills (SKILL.md)
-│       ├── hooks/               # Event hook configurations
-│       ├── .mcp.json            # MCP server configuration
-│       └── .lsp.json            # LSP server configuration
-├── integration_tests/           # Shared testing harness
-│   ├── run.sh                   # Test orchestrator (scans plugins/)
-│   ├── validate-manifest.sh     # Manifest JSON schema validator
-│   └── ...
-├── .github/workflows/           # GitHub Actions (Lint, Integration Tests)
-├── Makefile                     # Task runner
-└── README.md
+## Available Plugins
+
+### `essentials`
+
+A comprehensive sample plugin that demonstrates every supported extension point. Useful as a starting point and as a working reference.
+
+It ships:
+
+- **Skills**:
+  - `problem-solving` — Broadly and deeply analyze user intent (XY-aware) and evaluate multiple solution approaches with 0–100 scores. See [plugins/essentials/skills/problem-solving/README.md](plugins/essentials/skills/problem-solving/README.md).
+  - `deep-problem-solving` — Interactive deep-research and decision support: frame the real problem, ask 10 multiple-choice questions one at a time, then produce a rigorous comparative recommendation.
+  - `advanced-greet` — Sample greeting skill.
+  - `essentials` — Plugin overview skill.
+- **Agents**, **commands**, **hooks**, and **rules** scaffolding.
+- **MCP** and **LSP** server configuration (Claude Code only): [plugins/essentials/.mcp.json](plugins/essentials/.mcp.json), [plugins/essentials/.lsp.json](plugins/essentials/.lsp.json).
+
+For full per-plugin docs, browse [plugins/essentials/](plugins/essentials/).
+
+## Installation
+
+Pick the section for your coding agent.
+
+### Claude Code
+
+Requires the Claude CLI (`npm install -g @anthropic-ai/claude-code`).
+
+```bash
+claude plugin marketplace add yu-iskw/common-coding-agent-plugins
+claude plugin install essentials@claude-plugin-template
 ```
 
-## Quickstart
+Verify:
 
-1.  **Create a new repository** from this template.
-2.  **Explore the sample plugin** in `plugins/essentials/` to see how components are defined.
-3.  **Run local checks**:
-    ```bash
-    make lint
-    make test-integration-docker
-    ```
+```bash
+claude plugin list
+```
 
-## Development
+### Cursor
 
-### Adding a New Plugin
+Add this repository as a Cursor plugin marketplace; Cursor consumes [.cursor-plugin/marketplace.json](.cursor-plugin/marketplace.json) at the repo root and exposes the `essentials` plugin under the `cursor-plugin-template` marketplace.
 
-Create a new directory in `plugins/` following the [Standard Plugin Layout](https://code.claude.com/docs/en/plugins-reference#standard-plugin-layout):
+### Codex
 
-- `plugins/<name>/.claude-plugin/plugin.json`: Required manifest.
-- `plugins/<name>/skills/`: Agent Skills folder.
-- `plugins/<name>/agents/`: Subagent markdown files.
-- `plugins/<name>/hooks/`: Event hook configurations.
-- `plugins/<name>/.mcp.json`: MCP configurations.
-- `plugins/<name>/.lsp.json`: LSP configurations.
+Add this repository as a Codex plugin marketplace; Codex consumes [.codex-plugin/marketplace.json](.codex-plugin/marketplace.json) at the repo root and exposes the `essentials` plugin under the `codex-plugin-template` marketplace.
 
-### Testing
+## Contributing
 
-The integration test runner (`./integration_tests/run.sh`) automatically discovers all directories in `plugins/` that contain a `.claude-plugin/plugin.json` file.
-
-- Run all tests: `./integration_tests/run.sh`
-- Verbose output: `./integration_tests/run.sh --verbose`
-- Skip loading tests (if Claude CLI is not installed): `./integration_tests/run.sh --skip-loading`
-
-Docker integration tests (`make test-integration-docker`) run the same suite inside a container and additionally run a **plugin install** test: they add the workspace as a marketplace, install each plugin with `claude plugin install`, and verify with `claude plugin list`. The same Docker flow runs in CI (job `plugin-install-docker`).
-
-## CI/CD
-
-- **Trunk Check**: Runs linters and static analysis on every PR.
-- **Integration Tests**: Automatically validates every plugin in the `plugins/` directory.
+If you want to add a plugin, modify components, or run the integration tests, see [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## License
 
-Apache License 2.0. See `LICENSE`.
+Apache License 2.0. See [LICENSE](LICENSE).
