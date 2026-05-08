@@ -8,9 +8,9 @@
   },
   "plugins": [
     {
-      "name": "hello-world",
+      "name": "essentials",
       "description": "Comprehensive sample plugin demonstrating all Codex extension points",
-      "source": "./plugins/hello-world",
+      "source": "./plugins/essentials",
       "version": "1.0.0",
       "author": {
         "name": "yu-iskw"
